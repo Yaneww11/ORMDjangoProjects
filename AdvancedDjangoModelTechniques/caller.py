@@ -9,18 +9,25 @@ django.setup()
 # Import your models here
 from main_app.models import Customer
 from django.core.exceptions import ValidationError
-# Create queries within functions
-customer = Customer(
-    name="Svetlin Nakov",
-    age=19,
-    email="nakov@example.com",
-    phone_number="+359111111111",
-    website_url="https://nakov.com/"
+# Create the first 'Document' object with a title and content.
+document1 = Document.objects.create(
+    title="Django Framework 1",
+    content="Django is a high-level Python web framework for building web applications.",
 )
 
-try:
-    customer.full_clean()
-    customer.save()
+# Create the second 'Document' object with a title and content.
+document2 = Document.objects.create(
+    title="Django Framework 2",
+    content="Django framework provides tools for creating web pages, handling URL routing, and more.",
+)
 
-except ValidationError as e:
-    print('\n'.join(e.messages))
+# Update the 'search_vector' field in the 'Document' model with search vectors.
+Document.objects.update(search_vector=SearchVector('title', 'content'))
+
+# Perform a full-text search for documents containing the words 'django' and 'web framework'.
+results = Document.objects.filter(search_vector='django web framework')
+
+# Print the search results.
+for result in results:
+    print(f"Title: {result.title}")
+
